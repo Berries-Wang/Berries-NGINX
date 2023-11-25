@@ -1,6 +1,6 @@
 .DS_Store
 **/.DS_Store
-Nginx-1.24.0/build-output
+Nginx-1.24.0/build-output/nginx
 objs
 Makefile
 Natapp/natapp
