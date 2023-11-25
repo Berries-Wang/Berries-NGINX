@@ -1,4 +1,7 @@
 #!/bin/bash 
+# OS: Linux Wang 5.15.0-89-generic #99~20.04.1-Ubuntu SMP Thu Nov 2 15:16:47 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+# 依赖安装
+sudo apt-get -y install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
 CURPATH=`pwd`
 BUILDOUTPUT="${CURPATH}/build-output"
 # 防止执行目录错误
@@ -14,7 +17,7 @@ if [ -d "${BUILDOUTPUT}/nginx" ]; then
 fi
 echo "正在创建目录: ${BUILDOUTPUT}/nginx"
 mkdir -p ${BUILDOUTPUT}/nginx
-
+touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUILDOUTPUT}/nginx/error.log"
 # 安装依赖
  ./configure \
      --prefix=${BUILDOUTPUT}/nginx \
