@@ -10,13 +10,16 @@ if [[ ! -f "${CURPATH}/Nginx-Build.sh" ]];then
     exit;
 fi
 
+
 # 创建目录
 if [ -d "${BUILDOUTPUT}/nginx" ]; then 
-   echo "/nginx目录存在，删除目录文件"
+   echo "/nginx目录存在,删除目录文件"
    rm -rf ${BUILDOUTPUT}/nginx
 fi
 echo "正在创建目录: ${BUILDOUTPUT}/nginx"
 mkdir -p ${BUILDOUTPUT}/nginx
+mkdir -p ${BUILDOUTPUT}/nginx/logs
+cp ${CURPATH}/conf/mime.types ${CURPATH}/build-output/nginx/mime.types
 touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUILDOUTPUT}/nginx/error.log"
 # 安装依赖
  ./configure \
