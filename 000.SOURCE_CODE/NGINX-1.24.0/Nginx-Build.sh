@@ -21,11 +21,11 @@ mkdir -p ${BUILDOUTPUT}/nginx
 mkdir -p ${BUILDOUTPUT}/nginx/logs
 cp ${CURPATH}/conf/mime.types ${CURPATH}/build-output/nginx/mime.types
 touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUILDOUTPUT}/nginx/error.log"
-# 安装依赖
+# 安装依赖 
  ./configure \
      --prefix=${BUILDOUTPUT}/nginx \
-     --pid-path=${BUILDOUTPUT}/nginx/nginx.pid
-     --lock-path=${BUILDOUTPUT}/nginx/nginx.lock
+     --pid-path=${BUILDOUTPUT}/nginx/nginx.pid \
+     --lock-path=${BUILDOUTPUT}/nginx/nginx.lock \
      --error-log-path=${BUILDOUTPUT}/nginx/error.log \
      --http-log-path=${BUILDOUTPUT}/nginx/access.log \
      --with-http_gzip_static_module \
@@ -33,5 +33,6 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --http-proxy-temp-path=${BUILDOUTPUT}/nginx/proxy \
      --http-fastcgi-temp-path=${BUILDOUTPUT}/nginx/fastcgi \
      --http-uwsgi-temp-path=${BUILDOUTPUT}/nginx/uwsgi \
-     --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi
+     --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi \
+     --with-http_ssl_module
  make
