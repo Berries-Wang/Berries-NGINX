@@ -1,7 +1,11 @@
 #!/bin/bash 
 # OS: Linux Wang 5.15.0-89-generic #99~20.04.1-Ubuntu SMP Thu Nov 2 15:16:47 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
 # 依赖安装
-sudo apt-get -y install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
+
+export export LUAJIT_LIB=/usr/local/luajit2/lib
+export export LUAJIT_INC=/usr/local/luajit2/include/luajit-2.1
+
+#sudo apt-get -y install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
 CURPATH=`pwd`
 BUILDOUTPUT="${CURPATH}/build-output"
 # 防止执行目录错误
@@ -34,5 +38,9 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --http-fastcgi-temp-path=${BUILDOUTPUT}/nginx/fastcgi \
      --http-uwsgi-temp-path=${BUILDOUTPUT}/nginx/uwsgi \
      --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi \
-     --with-http_ssl_module
- make
+     --with-http_ssl_module \
+     --with-ld-opt=-Wl,-rpath,/usr/local/luajit2/lib \
+     --with-pcre \
+     --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/ngx_devel_kit-0.2.19 \
+     --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/lua-nginx-module-0.10.29
+#make
