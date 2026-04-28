@@ -15,7 +15,6 @@
 |6|- [000.SOURCE_CODE/NGINX-1.30.0]|- 编译:[000.SOURCE_CODE/NGINX-1.30.0/Nginx-Build.sh]|-|
 
 
-
 ---
 
 ## 完成标识
@@ -29,3 +28,10 @@ location /hello_lua {
 访问localhost/hello_lua会出现”hello, lua”表示安装成功
 hello, lua
 ```
+
+---
+
+## 附录
+
+### 关于软件版本
+如何选择(升级)对应插件的软件版本,可以参考:[OpenResty® 是一款基于 NGINX 和 LuaJIT 的 Web 平台 的 Changelog](https://openresty.org/cn/changelog-1025003.html)
