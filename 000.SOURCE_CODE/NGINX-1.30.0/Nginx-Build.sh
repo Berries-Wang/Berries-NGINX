@@ -39,6 +39,7 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --http-uwsgi-temp-path=${BUILDOUTPUT}/nginx/uwsgi \
      --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi \
      --with-http_ssl_module \
+     --with-http_stub_status_module \
      --with-ld-opt=-Wl,-rpath,/usr/local/luajit2/lib \
      --with-pcre \
      --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/ngx_devel_kit-0.2.19 \

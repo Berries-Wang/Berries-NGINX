@@ -34,5 +34,6 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --http-fastcgi-temp-path=${BUILDOUTPUT}/nginx/fastcgi \
      --http-uwsgi-temp-path=${BUILDOUTPUT}/nginx/uwsgi \
      --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi \
-     --with-http_ssl_module
+     --with-http_ssl_module \
+     --with-http_stub_status_module
  make
