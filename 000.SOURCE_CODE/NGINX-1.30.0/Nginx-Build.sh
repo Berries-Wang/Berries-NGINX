@@ -33,6 +33,7 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --error-log-path=${BUILDOUTPUT}/nginx/error.log \
      --http-log-path=${BUILDOUTPUT}/nginx/access.log \
      --with-http_gzip_static_module \
+     --with-http_v2_module \
      --http-client-body-temp-path=${BUILDOUTPUT}/nginx/client \
      --http-proxy-temp-path=${BUILDOUTPUT}/nginx/proxy \
      --http-fastcgi-temp-path=${BUILDOUTPUT}/nginx/fastcgi \
