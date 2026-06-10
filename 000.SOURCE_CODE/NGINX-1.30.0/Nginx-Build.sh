@@ -72,6 +72,7 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --http-uwsgi-temp-path=${BUILDOUTPUT}/nginx/uwsgi \
      --http-scgi-temp-path=${BUILDOUTPUT}/nginx/scgi \
      --with-http_ssl_module \
+     --with-http_stub_status_module \
      --with-http_v2_module \
      --with-http_v3_module \
      --with-cc-opt="-I${OPENSSL_PREFIX}/include" \
