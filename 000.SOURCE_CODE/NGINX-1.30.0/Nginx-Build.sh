@@ -79,5 +79,5 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --with-ld-opt="-Wl,-rpath,/usr/local/luajit2/lib -L${OPENSSL_PREFIX}/lib64 -Wl,-rpath,${OPENSSL_PREFIX}/lib64" \
      --with-pcre \
      --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/ngx_devel_kit-0.2.19 \
-     --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/lua-nginx-module-0.10.29
+     --add-module=/home/wei/OPEN_SOURCE/Berries-NGINX/000.SOURCE_CODE/NGINX-LUA/lua-nginx-module-0.10.30rc2
  make

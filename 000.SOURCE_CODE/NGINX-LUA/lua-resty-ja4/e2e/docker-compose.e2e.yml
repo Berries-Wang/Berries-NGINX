@@ -1,0 +1,33 @@
+services:
+  nginx:
+    image: openresty/openresty:1.27.1.2-11-jammy
+    volumes:
+      - ../lib:/app/lib:ro
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+    command:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /etc/nginx
+        openssl req -x509 -newkey rsa:2048 \
+          -keyout /etc/nginx/server.key -out /etc/nginx/server.crt \
+          -days 365 -nodes -subj '/CN=ja4-e2e' 2>/dev/null
+        openresty -g 'daemon off;'
+    healthcheck:
+      test: ["CMD", "curl", "-kf", "https://localhost/health"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  tests:
+    build:
+      context: ..
+      dockerfile: e2e/Dockerfile.tests
+    depends_on:
+      nginx:
+        condition: service_healthy
+    environment:
+      - NGINX_HOST=nginx
+      - NGINX_PORT=443
+      - NGINX_RAW_PORT=8443
