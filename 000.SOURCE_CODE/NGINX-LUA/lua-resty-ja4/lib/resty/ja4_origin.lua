@@ -131,25 +131,22 @@ function _M.build(data)
     end
 
     local cipher_count = math_min(#data.ciphers, 99)
+    local ext_count = math_min(#data.extensions, 99)
 
-    -- Section A: 7 fields separated by '_' for Rust parse_ja4 compatibility
-    -- Field layout: [protocol+version] [sni] [cipherCount] [ciphers/hash] [extCount] [extensions/hash] [alpn]
-    -- Example hash: t13_d_HASH1_18_HASH2_h2
-    -- Example raw:  t13_d_15_0a0a,1301,..._18_0000,0005,..._h2
-    local pos = 0
-    -- Field 1: protocol+version (no separator between them)
-    out_buf[pos] = byte(data.protocol);                        pos = pos + 1
+    -- Section A: 10 bytes directly into out_buf via byte writes + NUM2 lookup
+    out_buf[0] = byte(data.protocol)
     local ver = data.version
-    out_buf[pos] = byte(ver, 1); out_buf[pos+1] = byte(ver, 2); pos = pos + 2
-    out_buf[pos] = 0x5F;                                       pos = pos + 1  -- _
-    -- Field 2: sni
-    out_buf[pos] = byte(data.sni);                             pos = pos + 1
-    out_buf[pos] = 0x5F;                                       pos = pos + 1
-    -- Field 3: cipher_count
+    out_buf[1] = byte(ver, 1); out_buf[2] = byte(ver, 2)
+    out_buf[3] = byte(data.sni)
     local cc = NUM2[cipher_count]
-    out_buf[pos] = byte(cc, 1); out_buf[pos+1] = byte(cc, 2); pos = pos + 2
-    out_buf[pos] = 0x5F;                                       pos = pos + 1
-    -- Field 4 (ciphers/hash) written below after sorting
+    out_buf[4] = byte(cc, 1); out_buf[5] = byte(cc, 2)
+    local ec = NUM2[ext_count]
+    out_buf[6] = byte(ec, 1); out_buf[7] = byte(ec, 2)
+    local alp = data.alpn
+    out_buf[8] = byte(alp, 1); out_buf[9] = byte(alp, 2)
+
+    out_buf[10] = 0x5F  -- '_'
+    local pos = 11
 
     -- Copy to FFI arrays and sort numerically (fully JIT-inlined)
     local cn = copy_ciphers(data.ciphers, cipher_u16)
@@ -159,23 +156,18 @@ function _M.build(data)
     isort_u16(ext_u16, ext_n)
 
     if _hash_mode then
-        -- Field 4: sorted ciphers -> SHA256 -> 12 hex bytes
+        -- Section B: sorted ciphers -> csv_buf -> SHA256 -> 12 hex bytes to out_buf
         if cn == 0 then
             ffi_copy(out_buf + pos, EMPTY_HASH, 12)
         else
             local csv_len = write_u16_hex_csv(cipher_u16, cn, csv_buf, 0)
             sha256_to_buf(csv_buf, csv_len, out_buf, pos)
         end
-        pos = pos + 12
+        pos = pos + 12  -- 23
 
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
+        out_buf[pos] = 0x5F; pos = pos + 1  -- 24
 
-        -- Field 5: ext_count
-        local ec = NUM2[ext_n]
-        out_buf[pos] = byte(ec, 1); out_buf[pos+1] = byte(ec, 2); pos = pos + 2
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
-
-        -- Field 6: sorted exts + sig_algs -> SHA256 -> 12 hex bytes
+        -- Section C: sorted exts + sig_algs -> csv_buf -> SHA256 -> 12 hex bytes
         local sc_len = write_u16_hex_csv(ext_u16, ext_n, csv_buf, 0)
         if data.sig_algs and #data.sig_algs > 0 then
             csv_buf[sc_len] = 0x5F  -- '_'
@@ -186,34 +178,19 @@ function _M.build(data)
         else
             sha256_to_buf(csv_buf, sc_len, out_buf, pos)
         end
-        pos = pos + 12
-
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
-        -- Field 7: alpn
-        local alp = data.alpn
-        out_buf[pos] = byte(alp, 1); out_buf[pos+1] = byte(alp, 2); pos = pos + 2
+        pos = pos + 12  -- 36
     else
-        -- Field 4 raw: hex CSV directly into out_buf
+        -- Section B raw: hex CSV directly into out_buf
         pos = write_u16_hex_csv(cipher_u16, cn, out_buf, pos)
 
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
+        out_buf[pos] = 0x5F; pos = pos + 1
 
-        -- Field 5: ext_count
-        local ec = NUM2[ext_n]
-        out_buf[pos] = byte(ec, 1); out_buf[pos+1] = byte(ec, 2); pos = pos + 2
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
-
-        -- Field 6 raw: exts CSV + '_' + sig_algs CSV
+        -- Section C raw: exts CSV + '_' + sig_algs CSV
         pos = write_u16_hex_csv(ext_u16, ext_n, out_buf, pos)
         if data.sig_algs and #data.sig_algs > 0 then
             out_buf[pos] = 0x5F; pos = pos + 1
             pos = write_hex4_csv_at(data.sig_algs, #data.sig_algs, out_buf, pos)
         end
-
-        out_buf[pos] = 0x5F; pos = pos + 1  -- _ separator
-        -- Field 7: alpn
-        local alp = data.alpn
-        out_buf[pos] = byte(alp, 1); out_buf[pos+1] = byte(alp, 2); pos = pos + 2
     end
 
     return ffi_string(out_buf, pos)
