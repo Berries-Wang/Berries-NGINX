@@ -1,7 +1,6 @@
 .DS_Store
 **/.DS_Store
 Nginx-1.24.0/build-output/nginx
-Makefile
 Natapp/natapp
 000.SOURCE_CODE/NGINX-1.30.0/openssl-3.4.1
 000.SOURCE_CODE/NGINX-1.30.0/build-output/openssl
