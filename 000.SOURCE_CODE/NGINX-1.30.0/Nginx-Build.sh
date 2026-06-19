@@ -75,6 +75,7 @@ touch "${BUILDOUTPUT}/nginx/nginx.lock" "${BUILDOUTPUT}/nginx/access.log" "${BUI
      --with-http_stub_status_module \
      --with-http_v2_module \
      --with-http_v3_module \
+     --with-openssl=${OPENSSL_SRC} \
      --with-cc-opt="-I${OPENSSL_PREFIX}/include" \
      --with-ld-opt="-Wl,-rpath,/usr/local/luajit2/lib -L${OPENSSL_PREFIX}/lib64 -Wl,-rpath,${OPENSSL_PREFIX}/lib64" \
      --with-pcre \
